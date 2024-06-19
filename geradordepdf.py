@@ -38,20 +38,31 @@ def create_pdf(cliente, telefone, endereco, prazo_execucao, descricao_servico, f
     title = "Orçamento de Demolição"
     c.drawCentredString(width / 2.0, height - 10*cm, title)
     
+    # Função para desenhar texto com quebra automática de linha
+    def draw_wrapped_text(c, text, x, y, max_width, line_height):
+        wrapped_text = textwrap.wrap(text, width=max_width)
+        for line in wrapped_text:
+            c.drawString(x, y, line)
+            y -= line_height
+        return y
+
     # Informações do cliente e serviço
     c.setFont("Helvetica", 12)
-    c.drawString(2*cm, height - 12*cm, f"Cliente: {cliente}")
-    c.drawString(2*cm, height - 13*cm, f"Telefone: {telefone}")
-    c.drawString(2*cm, height - 14*cm, f"Endereço: {endereco}")
-    c.drawString(2*cm, height - 15*cm, f"Prazo de Execução: {prazo_execucao}")
-    c.drawString(2*cm, height - 16*cm, f"Descrição do Serviço: {descricao_servico}")
-    c.drawString(2*cm, height - 17*cm, f"Forma de Pagamento: {forma_pagamento}")
-    c.drawString(2*cm, height - 18*cm, f"Valor Acordado: R${valor_acordado:,.2f}")
-    c.drawString(2*cm, height - 19*cm, f"Observação: {observacao}")
+    y_position = height - 12*cm
+    line_height = 0.5*cm
+    y_position = draw_wrapped_text(c, f"Cliente: {cliente}", 2*cm, y_position, 100, line_height)
+    y_position = draw_wrapped_text(c, f"Telefone: {telefone}", 2*cm, y_position, 100, line_height)
+    y_position = draw_wrapped_text(c, f"Endereço: {endereco}", 2*cm, y_position, 100, line_height)
+    y_position = draw_wrapped_text(c, f"Prazo de Execução: {prazo_execucao}", 2*cm, y_position, 100, line_height)
+    y_position = draw_wrapped_text(c, f"Descrição do Serviço: {descricao_servico}", 2*cm, y_position, 100, line_height)
+    y_position = draw_wrapped_text(c, f"Forma de Pagamento: {forma_pagamento}", 2*cm, y_position, 100, line_height)
+    y_position = draw_wrapped_text(c, f"Valor Acordado: R${valor_acordado:,.2f}", 2*cm, y_position, 100, line_height)
+    y_position = draw_wrapped_text(c, f"Observação: {observacao}", 2*cm, y_position, 100, line_height)
 
     # Termos de acordo
     c.setFont("Helvetica-Bold", 12)
-    c.drawString(2*cm, height - 20*cm, "Termos de Acordo:")
+    y_position -= line_height
+    y_position = draw_wrapped_text(c, "Termos de Acordo:", 2*cm, y_position, 100, line_height)
     c.setFont("Helvetica", 10)
     terms = [
         "a) Serviços Prestados: O contratante concorda em realizar a demolição completa do imóvel conforme descrito na seção 1 deste documento.",
@@ -59,19 +70,19 @@ def create_pdf(cliente, telefone, endereco, prazo_execucao, descricao_servico, f
         "c) Pagamento: O cliente concorda em pagar o valor total estipulado neste orçamento de demolição, conforme descrito na seção VALOR, após a conclusão satisfatória dos serviços."
     ]
     
-    y_position = height - 21*cm
-    max_width = width - 4*cm  # Margem de 2 cm de cada lado
     for term in terms:
-        wrapped_text = textwrap.wrap(term, width=100)  # Ajuste o valor de width conforme necessário
-        for line in wrapped_text:
-            c.drawString(2*cm, y_position, line)
-            y_position -= 0.5*cm
+        y_position -= line_height
+        y_position = draw_wrapped_text(c, term, 2*cm, y_position, 100, line_height)
 
     # Data e assinaturas
-    c.drawString(2*cm, 6*cm, f"Data: {datetime.now().strftime('%d/%m/%Y')}")
-    c.drawString(2*cm, 5*cm, "Cliente: ___________________________")
-    c.drawString(2*cm, 4.5*cm, cliente)
-    c.drawString(10*cm, 5*cm, "Herenildo Da Silva Souza: ___________________________")
+    y_position -= 2*line_height
+    c.drawString(2*cm, y_position, f"Data: {datetime.now().strftime('%d/%m/%Y')}")
+    y_position -= line_height
+    c.drawString(2*cm, y_position, "Cliente: ___________________________")
+    y_position -= line_height
+    c.drawString(2*cm, y_position, cliente)
+    y_position -= line_height
+    c.drawString(10*cm, y_position + line_height, "Herenildo Da Silva Souza: ___________________________")
 
     # Rodapé
     c.setFont("Helvetica", 8)
