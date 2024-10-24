@@ -1,3 +1,12 @@
 streamlit
 reportlab
 Pillow
+PyMuPDF
+deep-translator
+pdf2docx
+python-docx
+docx2pdf
+pdfplumber
+python-docx
+pypdf2
+reportlab
